@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/utils": ["../apps/www/lib/utils.ts"],
+      "@/registry/*": ["./*"],
+      "@agentive-ui/core": ["../packages/core/src/index.ts"]
+    }
+  },
+  "include": ["agentive-ui/**/*.tsx"]
+}

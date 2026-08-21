@@ -9,6 +9,11 @@
       "title": "Agentive UI Theme",
       "description": "The agent-specific CSS variable layer layered on top of shadcn's tokens. Installs --agentive-* variables for roles, agent state, tool lifecycle, citations, and browser agents.",
       "cssVars": {
+        "theme": {
+          "animate-agentive-caret": "agentive-caret-blink 1s steps(2, start) infinite",
+          "animate-agentive-shimmer": "agentive-shimmer 2s linear infinite",
+          "animate-agentive-typing": "agentive-typing 1.2s ease-in-out infinite"
+        },
         "light": {
           "agentive-user-bubble": "var(--primary)",
           "agentive-user-bubble-fg": "var(--primary-foreground)",
@@ -34,6 +39,20 @@
           "agentive-tool-success": "oklch(0.723 0.219 149.579)",
           "agentive-approval-accent": "oklch(0.828 0.189 84.429)"
         }
+      },
+      "css": {
+        "@keyframes agentive-caret-blink": {
+          "0%, 100%": { "opacity": "1" },
+          "50%": { "opacity": "0" }
+        },
+        "@keyframes agentive-shimmer": {
+          "0%": { "background-position": "200% 0" },
+          "100%": { "background-position": "-200% 0" }
+        },
+        "@keyframes agentive-typing": {
+          "0%, 60%, 100%": { "transform": "translateY(0)", "opacity": "0.4" },
+          "30%": { "transform": "translateY(-2px)", "opacity": "1" }
+        }
       }
     },
     {
@@ -42,12 +61,126 @@
       "title": "Spinner",
       "description": "A token-driven loading spinner used by agent status indicators, tool states, and pending turns.",
       "registryDependencies": ["@agentive-ui/theme"],
-      "dependencies": ["@agentive-ui/core"],
+      "dependencies": [],
       "files": [
         {
           "path": "registry/agentive-ui/spinner.tsx",
           "type": "registry:component",
           "target": "@components/agentive/spinner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "typing-dots",
+      "type": "registry:component",
+      "title": "Typing Dots",
+      "description": "An animated 'agent is typing' indicator with staggered dots.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/agentive-ui/typing-dots.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/typing-dots.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shimmer",
+      "type": "registry:component",
+      "title": "Shimmer",
+      "description": "A skeleton placeholder with a sweeping gradient for pending content.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/agentive-ui/shimmer.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/shimmer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "streaming-text",
+      "type": "registry:component",
+      "title": "Streaming Text",
+      "description": "Plain-text token rendering with an optional blinking caret.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/agentive-ui/streaming-text.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/streaming-text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "markdown-content",
+      "type": "registry:component",
+      "title": "Markdown Content",
+      "description": "Streaming-safe GFM markdown renderer with syntax-highlighted code blocks, tables, and optional math.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["react-markdown", "remark-gfm", "shiki", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/markdown-content.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/markdown-content.tsx"
+        },
+        {
+          "path": "registry/agentive-ui/code-block.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/code-block.tsx"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:component",
+      "title": "Message",
+      "description": "A chat message with compound Avatar, Content, Actions, and Timestamp slots. Renders typed MessageParts.",
+      "registryDependencies": [
+        "@agentive-ui/theme",
+        "@agentive-ui/markdown-content",
+        "@agentive-ui/typing-dots"
+      ],
+      "dependencies": ["@agentive-ui/core", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/message.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/message.tsx"
+        }
+      ]
+    },
+    {
+      "name": "conversation",
+      "type": "registry:component",
+      "title": "Conversation",
+      "description": "A chat transcript scroll container that sticks to the bottom while streaming, preserves position on history load, and offers a jump-to-latest pill.",
+      "registryDependencies": ["@agentive-ui/theme", "@agentive-ui/message"],
+      "dependencies": ["@agentive-ui/core", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/conversation.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/conversation.tsx"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "registry:component",
+      "title": "Prompt Input",
+      "description": "An auto-growing composer with Enter-to-send, a stop-generation button, and attachment chips.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/prompt-input.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/prompt-input.tsx"
         }
       ]
     }
