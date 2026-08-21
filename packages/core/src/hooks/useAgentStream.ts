@@ -21,7 +21,10 @@ export interface AgentStreamController {
   error?: { message: string; code?: string }
   /** Whether a stream is currently being consumed. */
   isStreaming: boolean
-  /** Consume an async iterable of events, resetting any prior messages. */
+  /**
+   * Consume an async iterable of events, appending to the current messages.
+   * Call `clear()` first to start a fresh conversation.
+   */
   start: (
     stream: AsyncIterable<AgentEvent> | Iterable<AgentEvent>
   ) => Promise<void>
@@ -43,11 +46,18 @@ export interface AgentStreamController {
 export function useAgentStream(
   options: UseAgentStreamOptions = {}
 ): AgentStreamController {
-  const [state, setState] = useState<AgentStreamState>(createInitialState)
+  const stateRef = useRef<AgentStreamState>(createInitialState())
+  const [state, setState] = useState<AgentStreamState>(stateRef.current)
   const [isStreaming, setIsStreaming] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const optionsRef = useRef(options)
   optionsRef.current = options
+
+  // Single commit point: update the ref synchronously and trigger a render.
+  const commit = useCallback((next: AgentStreamState) => {
+    stateRef.current = next
+    setState(next)
+  }, [])
 
   // Abort any in-flight stream on unmount.
   useEffect(() => {
@@ -58,13 +68,16 @@ export function useAgentStream(
 
   const start = useCallback(
     async (stream: AsyncIterable<AgentEvent> | Iterable<AgentEvent>) => {
-      // Abort a previous stream and start fresh.
       abortRef.current?.abort()
       const controller = new AbortController()
       abortRef.current = controller
 
-      const accumulator = createInitialState()
-      setState(accumulator)
+      // Continue from the current messages rather than resetting.
+      const accumulator: AgentStreamState = {
+        messages: [...stateRef.current.messages],
+        status: "streaming",
+      }
+      commit(accumulator)
       setIsStreaming(true)
 
       try {
@@ -73,14 +86,13 @@ export function useAgentStream(
           if (event.type === "approval-required") {
             optionsRef.current.onApprovalRequired?.(event.request)
           }
-          const next = applyAgentEvent(accumulator, event)
-          setState(next)
+          commit(applyAgentEvent(accumulator, event))
         }
       } catch (error) {
         if (!controller.signal.aborted) {
           const err = error instanceof Error ? error : new Error(String(error))
           optionsRef.current.onError?.(err)
-          setState((prev) => ({ ...prev, status: "error" }))
+          commit({ ...accumulator, status: "error" })
         }
       } finally {
         if (abortRef.current === controller) {
@@ -89,25 +101,34 @@ export function useAgentStream(
         }
       }
     },
-    []
+    [commit]
   )
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
   }, [])
 
-  const setMessages = useCallback((messages: AgentMessage[]) => {
-    setState({ messages, status: "complete" })
-  }, [])
+  const setMessages = useCallback(
+    (messages: AgentMessage[]) => {
+      commit({ messages, status: "complete" })
+    },
+    [commit]
+  )
 
-  const append = useCallback((message: AgentMessage) => {
-    setState((prev) => ({ ...prev, messages: [...prev.messages, message] }))
-  }, [])
+  const append = useCallback(
+    (message: AgentMessage) => {
+      commit({
+        ...stateRef.current,
+        messages: [...stateRef.current.messages, message],
+      })
+    },
+    [commit]
+  )
 
   const clear = useCallback(() => {
     abortRef.current?.abort()
-    setState(createInitialState())
-  }, [])
+    commit(createInitialState())
+  }, [commit])
 
   return {
     messages: state.messages,

@@ -1,6 +1,6 @@
 {
   "name": "@agentive-ui/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Headless, zero-UI core for Agentive UI: types, streaming/state hooks, message-part parsers, and transport adapters.",
   "license": "MIT",
   "type": "module",

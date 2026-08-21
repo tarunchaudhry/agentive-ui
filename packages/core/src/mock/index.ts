@@ -118,6 +118,80 @@ export async function* createToolCallMockStream(
 }
 
 /* ------------------------------------------------------------------ *
+ * Conversations
+ * ------------------------------------------------------------------ */
+
+export interface ConversationTurn {
+  role: MessageRole
+  text?: string
+  /** If set, this turn becomes a tool call instead of plain text. */
+  tool?: {
+    name: string
+    args: Record<string, unknown>
+    result?: unknown
+  }
+}
+
+export interface ConversationMockOptions extends MockStreamOptions {
+  turns: ConversationTurn[]
+  /** Prefix for generated message ids. */
+  messageIdPrefix?: string
+}
+
+/**
+ * Stream a scripted multi-turn conversation. Each assistant turn streams its
+ * text token-by-token; a turn with a `tool` performs a tool call first.
+ */
+export async function* createConversationMockStream(
+  options: ConversationMockOptions
+): AsyncGenerator<AgentEvent> {
+  const prefix = options.messageIdPrefix ?? "mock"
+  let turnIndex = 0
+
+  for (const turn of options.turns) {
+    const messageId = `${prefix}-msg-${turnIndex++}`
+    yield { type: "message-start", messageId, role: turn.role }
+
+    if (turn.role === "assistant" && turn.tool) {
+      const toolCallId = nextId("tc")
+      const partId = `${toolCallId}:part`
+      const argsText = JSON.stringify(turn.tool.args)
+      yield {
+        type: "tool-call-start",
+        messageId,
+        partId,
+        toolCallId,
+        toolName: turn.tool.name,
+      }
+      for (const chunk of chunkString(argsText, 6)) {
+        await tick(options)
+        yield { type: "tool-call-delta", toolCallId, argsDelta: chunk }
+      }
+      await tick(options)
+      yield { type: "tool-call-end", toolCallId, args: turn.tool.args }
+      await tick(options)
+      yield {
+        type: "tool-result",
+        messageId,
+        toolCallId,
+        result: turn.tool.result ?? { ok: true },
+        status: "success",
+      }
+    }
+
+    if (turn.text) {
+      for (const chunk of Array.from(turn.text)) {
+        await tick(options)
+        yield { type: "text-delta", messageId, delta: chunk }
+      }
+    }
+
+    await tick(options)
+    yield { type: "message-end", messageId }
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Sources
  * ------------------------------------------------------------------ */
 
