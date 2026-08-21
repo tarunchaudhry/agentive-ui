@@ -92,6 +92,41 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --animate-agentive-caret: agentive-caret-blink 1s steps(2, start) infinite;
+  --animate-agentive-shimmer: agentive-shimmer 2s linear infinite;
+  --animate-agentive-typing: agentive-typing 1.2s ease-in-out infinite;
+}
+
+@keyframes agentive-caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes agentive-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes agentive-typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-2px);
+    opacity: 1;
+  }
 }
 
 @layer base {
