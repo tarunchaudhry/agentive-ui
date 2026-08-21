@@ -62,3 +62,6 @@ jobs:
 
       - name: Build mock playground
         run: pnpm --filter @agentive-ui/mock-playground build
+
+      - name: Build AI SDK chat example
+        run: pnpm --filter @agentive-ui/ai-sdk-chat build
