@@ -1,6 +1,7 @@
 export * from "./types"
 export * from "./hooks/useAgentStream"
 export * from "./hooks/useAutoScroll"
+export * from "./hooks/useToolApprovals"
 export { applyAgentEvent, createInitialState } from "./stream/assemble"
 export type { AgentStreamState } from "./stream/assemble"
 export { isAgentEvent, parseSSE, parseNDJSON } from "./parsers/sse"

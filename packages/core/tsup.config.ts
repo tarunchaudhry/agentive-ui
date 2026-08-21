@@ -1,7 +1,12 @@
 import { defineConfig } from "tsup"
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/mock/index.ts", "src/adapters/sse.ts"],
+  entry: [
+    "src/index.ts",
+    "src/mock/index.ts",
+    "src/adapters/sse.ts",
+    "src/adapters/ai-sdk.ts",
+  ],
   format: ["esm"],
   dts: true,
   sourcemap: true,

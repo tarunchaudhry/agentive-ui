@@ -18,6 +18,10 @@
       "types": "./dist/adapters/sse.d.ts",
       "import": "./dist/adapters/sse.js"
     },
+    "./ai-sdk": {
+      "types": "./dist/adapters/ai-sdk.d.ts",
+      "import": "./dist/adapters/ai-sdk.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -41,9 +45,12 @@
     }
   },
   "devDependencies": {
+    "@testing-library/react": "^16.1.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "jsdom": "^25.0.1",
     "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tsup": "^8.3.5",
     "vitest": "^2.1.8"
   }
