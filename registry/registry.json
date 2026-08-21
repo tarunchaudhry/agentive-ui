@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "agentive-ui",
+  "homepage": "https://agentive-ui.dev",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "Agentive UI Theme",
+      "description": "The agent-specific CSS variable layer layered on top of shadcn's tokens. Installs --agentive-* variables for roles, agent state, tool lifecycle, citations, and browser agents.",
+      "cssVars": {
+        "light": {
+          "agentive-user-bubble": "var(--primary)",
+          "agentive-user-bubble-fg": "var(--primary-foreground)",
+          "agentive-assistant-bubble": "var(--muted)",
+          "agentive-assistant-bubble-fg": "var(--foreground)",
+          "agentive-thinking": "var(--muted-foreground)",
+          "agentive-streaming-caret": "var(--primary)",
+          "agentive-shimmer-from": "var(--muted)",
+          "agentive-shimmer-to": "var(--accent)",
+          "agentive-tool-pending": "var(--muted-foreground)",
+          "agentive-tool-running": "var(--primary)",
+          "agentive-tool-success": "oklch(0.596 0.145 163.225)",
+          "agentive-tool-error": "var(--destructive)",
+          "agentive-approval-accent": "oklch(0.769 0.188 70.08)",
+          "agentive-citation": "var(--primary)",
+          "agentive-source-card-border": "var(--border)",
+          "agentive-action-highlight": "var(--ring)",
+          "agentive-viewport-border": "var(--border)",
+          "agentive-motion-duration": "0.2s",
+          "agentive-bubble-radius": "var(--radius)"
+        },
+        "dark": {
+          "agentive-tool-success": "oklch(0.723 0.219 149.579)",
+          "agentive-approval-accent": "oklch(0.828 0.189 84.429)"
+        }
+      }
+    },
+    {
+      "name": "spinner",
+      "type": "registry:component",
+      "title": "Spinner",
+      "description": "A token-driven loading spinner used by agent status indicators, tool states, and pending turns.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["@agentive-ui/core"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/spinner.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/spinner.tsx"
+        }
+      ]
+    }
+  ]
+}
