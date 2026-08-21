@@ -136,6 +136,111 @@
       ]
     },
     {
+      "name": "reasoning",
+      "type": "registry:component",
+      "title": "Reasoning",
+      "description": "Collapsible thinking panel with duration metrics and auto-open during streaming.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/reasoning.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/reasoning.tsx"
+        }
+      ]
+    },
+    {
+      "name": "task-timeline",
+      "type": "registry:component",
+      "title": "Task Timeline",
+      "description": "Ordered agent plan/steps execution with status lifecycle and collapsible details.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/task-timeline.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/task-timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tool-call",
+      "type": "registry:component",
+      "title": "Tool Call",
+      "description": "Interactive card showing tool name, lifecycle badge, formatted input args, collapsible output, and retry slot.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["@agentive-ui/core", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/tool-call.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/tool-call.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tool-approval",
+      "type": "registry:component",
+      "title": "Tool Approval",
+      "description": "Human-in-the-loop approval card with Approve/Deny and argument editing capabilities.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["@agentive-ui/core", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/tool-approval.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/tool-approval.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-status",
+      "type": "registry:component",
+      "title": "Agent Status",
+      "description": "Compact live agent status line with icon and elapsed execution timer.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/agent-status.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/agent-status.tsx"
+        }
+      ]
+    },
+    {
+      "name": "usage-meter",
+      "type": "registry:component",
+      "title": "Usage Meter",
+      "description": "Context window token capacity and estimated cost monitor with dynamic warning thresholds.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/usage-meter.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/usage-meter.tsx"
+        }
+      ]
+    },
+    {
+      "name": "error-state",
+      "type": "registry:component",
+      "title": "Error State",
+      "description": "Inline recoverable error block with error codes and retry action.",
+      "registryDependencies": ["@agentive-ui/theme"],
+      "dependencies": ["lucide-react"],
+      "files": [
+        {
+          "path": "registry/agentive-ui/error-state.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/error-state.tsx"
+        }
+      ]
+    },
+    {
       "name": "message",
       "type": "registry:component",
       "title": "Message",
@@ -143,7 +248,10 @@
       "registryDependencies": [
         "@agentive-ui/theme",
         "@agentive-ui/markdown-content",
-        "@agentive-ui/typing-dots"
+        "@agentive-ui/typing-dots",
+        "@agentive-ui/reasoning",
+        "@agentive-ui/tool-call",
+        "@agentive-ui/error-state"
       ],
       "dependencies": ["@agentive-ui/core", "lucide-react"],
       "files": [

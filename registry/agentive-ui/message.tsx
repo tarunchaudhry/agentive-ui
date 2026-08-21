@@ -16,6 +16,9 @@ import {
 
 import { MarkdownContent } from "./markdown-content"
 import { TypingDots } from "./typing-dots"
+import { Reasoning } from "./reasoning"
+import { ToolCall } from "./tool-call"
+import { ErrorState } from "./error-state"
 
 /* ------------------------------------------------------------------ *
  * Context
@@ -206,14 +209,36 @@ function renderMessagePart(part: MessagePart): React.ReactNode {
   switch (part.type) {
     case "text":
       return <MarkdownContent key={part.id}>{part.text}</MarkdownContent>
+    case "reasoning":
+      return (
+        <Reasoning
+          key={part.id}
+          text={part.text}
+          status={part.status}
+          durationMs={part.durationMs}
+        />
+      )
+    case "tool-call":
+      return (
+        <ToolCall
+          key={part.id}
+          name={part.call.name}
+          args={part.call.args}
+          result={part.call.result}
+          status={part.call.status}
+        />
+      )
+    case "tool-result":
+      // Usually merged inside ToolCall; if stand-alone, render clean output
+      return null
     case "error":
       return (
-        <div
+        <ErrorState
           key={part.id}
-          className="rounded-md border border-(--agentive-tool-error)/30 px-2.5 py-1.5 text-sm text-(--agentive-tool-error)"
-        >
-          {part.message}
-        </div>
+          message={part.message}
+          code={part.code}
+          recoverable={part.recoverable}
+        />
       )
     default:
       return (
