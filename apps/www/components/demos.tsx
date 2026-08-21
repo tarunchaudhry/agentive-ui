@@ -12,6 +12,16 @@ import { MarkdownContent } from "@/registry/agentive-ui/markdown-content"
 import { Message } from "@/registry/agentive-ui/message"
 import { Conversation } from "@/registry/agentive-ui/conversation"
 import { PromptInput } from "@/registry/agentive-ui/prompt-input"
+import { Reasoning } from "@/registry/agentive-ui/reasoning"
+import {
+  TaskTimeline,
+  type TaskStep,
+} from "@/registry/agentive-ui/task-timeline"
+import { ToolCall } from "@/registry/agentive-ui/tool-call"
+import { ToolApproval } from "@/registry/agentive-ui/tool-approval"
+import { AgentStatus } from "@/registry/agentive-ui/agent-status"
+import { UsageMeter } from "@/registry/agentive-ui/usage-meter"
+import { ErrorState } from "@/registry/agentive-ui/error-state"
 
 export function SpinnerDemo() {
   const [size, setSize] = React.useState<"sm" | "md" | "lg">("md")
@@ -186,6 +196,142 @@ export function PromptInputDemo() {
       {log ? (
         <p className="text-sm text-muted-foreground">Submitted: {log}</p>
       ) : null}
+    </div>
+  )
+}
+
+export function ReasoningDemo() {
+  return (
+    <div className="flex flex-col gap-3 max-w-xl">
+      <Reasoning
+        text="Evaluating search indices for relevant customer schema definitions.\nChecking foreign keys and indexes on `accounts` table."
+        durationMs={1850}
+        defaultOpen={true}
+      />
+      <Reasoning text="Thinking in background..." status="streaming" />
+    </div>
+  )
+}
+
+export function TaskTimelineDemo() {
+  const steps: TaskStep[] = [
+    {
+      id: "step-1",
+      title: "Query index health",
+      description: "Analyze fragmentation across primary keys",
+      status: "done",
+      details: "Scan completed in 45ms. 0 fragments detected.",
+    },
+    {
+      id: "step-2",
+      title: "Optimize partition layout",
+      description: "Moving archived records to cold storage",
+      status: "active",
+      details: "Streaming chunks 4/10...",
+    },
+    {
+      id: "step-3",
+      title: "Notify subscribers",
+      status: "pending",
+    },
+  ]
+  return (
+    <div className="max-w-xl rounded-lg border bg-card p-4">
+      <TaskTimeline steps={steps} defaultExpandedIds={["step-1"]} />
+    </div>
+  )
+}
+
+export function ToolCallDemo() {
+  return (
+    <div className="flex flex-col gap-3 max-w-xl">
+      <ToolCall
+        name="fetch_weather"
+        args={{ city: "San Francisco", units: "celsius" }}
+        result={{ temp: 18, condition: "Partly Cloudy", humidity: 68 }}
+        status="success"
+        defaultOpen={true}
+      />
+      <ToolCall
+        name="deploy_service"
+        args={{ cluster: "us-east-1", replicas: 4 }}
+        status="running"
+      />
+    </div>
+  )
+}
+
+export function ToolApprovalDemo() {
+  const [status, setStatus] = React.useState<string | null>(null)
+  return (
+    <div className="flex flex-col gap-3 max-w-xl">
+      <ToolApproval
+        request={{
+          id: "req-demo",
+          toolCallId: "tc-demo",
+          toolName: "purge_cache_records",
+          args: { zone: "production", invalidateAll: true },
+          rationale:
+            "Requires operator confirmation before flushing edge nodes.",
+          createdAt: Date.now(),
+        }}
+        onApprove={(args) =>
+          setStatus(`Approved with: ${JSON.stringify(args)}`)
+        }
+        onDeny={(reason) => setStatus(`Denied: ${reason}`)}
+      />
+      {status && (
+        <p className="text-xs text-muted-foreground font-mono">{status}</p>
+      )}
+    </div>
+  )
+}
+
+export function AgentStatusDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <AgentStatus
+        statusText="Scanning GitHub issues..."
+        startedAt={Date.now() - 14000}
+      />
+      <AgentStatus statusText="Analyzing stack trace" />
+    </div>
+  )
+}
+
+export function UsageMeterDemo() {
+  return (
+    <div className="flex flex-col gap-3 max-w-sm">
+      <UsageMeter tokens={45000} maxTokens={128000} costUsd={0.0084} />
+      <UsageMeter
+        tokens={121000}
+        maxTokens={128000}
+        costUsd={0.034}
+        warningThreshold={0.8}
+        dangerThreshold={0.95}
+      />
+    </div>
+  )
+}
+
+export function ErrorStateDemo() {
+  const [retried, setRetried] = React.useState(false)
+  return (
+    <div className="max-w-xl">
+      <ErrorState
+        message="Failed to connect to LangGraph streaming orchestrator."
+        code="ERR_NETWORK_DISCONNECT"
+        recoverable={true}
+        onRetry={() => {
+          setRetried(true)
+          setTimeout(() => setRetried(false), 2000)
+        }}
+      />
+      {retried && (
+        <span className="text-xs text-(--agentive-tool-success)">
+          Re-triggering connection...
+        </span>
+      )}
     </div>
   )
 }

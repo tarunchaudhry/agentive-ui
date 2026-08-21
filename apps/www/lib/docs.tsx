@@ -1,13 +1,20 @@
 import type { ComponentType } from "react"
 
 import {
+  AgentStatusDemo,
   ConversationDemo,
+  ErrorStateDemo,
   LoadersDemo,
   MarkdownDemo,
   MessageDemo,
   PromptInputDemo,
+  ReasoningDemo,
   SpinnerDemo,
   StreamingTextDemo,
+  TaskTimelineDemo,
+  ToolApprovalDemo,
+  ToolCallDemo,
+  UsageMeterDemo,
 } from "@/components/demos"
 
 export interface ComponentDoc {
@@ -41,10 +48,93 @@ export const docs: ComponentDoc[] = [
     description:
       "A chat message with compound Avatar, Content, Actions, and Timestamp slots. Renders a typed MessagePart array.",
     dependencies: ["@agentive-ui/core", "lucide-react"],
-    registryDependencies: ["markdown-content", "typing-dots"],
+    registryDependencies: [
+      "markdown-content",
+      "typing-dots",
+      "reasoning",
+      "tool-call",
+      "error-state",
+    ],
     source: "registry/agentive-ui/message.tsx",
     Demo: MessageDemo,
     a11y: "Action buttons are labelled; the streaming caret is aria-hidden so it is not read by screen readers.",
+  },
+  {
+    slug: "reasoning",
+    title: "Reasoning",
+    description:
+      "Collapsible thinking panel with duration metrics. Auto-opens while reasoning is streaming and auto-collapses on finish.",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/reasoning.tsx",
+    Demo: ReasoningDemo,
+    a11y: "Toggle button exposes `aria-expanded` and keyboard navigation.",
+  },
+  {
+    slug: "task-timeline",
+    title: "Task Timeline",
+    description:
+      "Ordered agent plan and step execution tracker with status indicators and collapsible detail rows.",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/task-timeline.tsx",
+    Demo: TaskTimelineDemo,
+    a11y: "Step list uses clear semantic status indicators.",
+  },
+  {
+    slug: "tool-call",
+    title: "Tool Call",
+    description:
+      "Interactive card showing tool name, lifecycle badge, formatted input arguments, collapsible output JSON, and retry slot.",
+    dependencies: ["@agentive-ui/core", "lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/tool-call.tsx",
+    Demo: ToolCallDemo,
+    a11y: "Expandable outputs and action retry buttons are accessible via keyboard.",
+  },
+  {
+    slug: "tool-approval",
+    title: "Tool Approval",
+    description:
+      "Human-in-the-loop approval card for sensitive actions with Approve / Deny and parameter editing controls.",
+    dependencies: ["@agentive-ui/core", "lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/tool-approval.tsx",
+    Demo: ToolApprovalDemo,
+    a11y: 'Announced with `role="alert"` to alert assistive technology to pending approval interruptions.',
+  },
+  {
+    slug: "agent-status",
+    title: "Agent Status",
+    description:
+      "Compact live agent status line with animated spinner icon and elapsed execution timer.",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/agent-status.tsx",
+    Demo: AgentStatusDemo,
+    a11y: 'Exposed as `role="status"` with `aria-live="polite"`.',
+  },
+  {
+    slug: "usage-meter",
+    title: "Usage Meter",
+    description:
+      "Context window token capacity and estimated cost monitor with dynamic warning and danger thresholds.",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/usage-meter.tsx",
+    Demo: UsageMeterDemo,
+    a11y: 'Includes accessible `role="progressbar"` with min, max, and now attributes.',
+  },
+  {
+    slug: "error-state",
+    title: "Error State",
+    description:
+      "Inline recoverable error block with error codes and retry action.",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["theme"],
+    source: "registry/agentive-ui/error-state.tsx",
+    Demo: ErrorStateDemo,
+    a11y: 'Uses `role="alert"` with accessible action buttons.',
   },
   {
     slug: "markdown-content",
