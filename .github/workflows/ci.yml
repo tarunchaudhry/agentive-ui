@@ -33,6 +33,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Typecheck registry
+        run: cd registry && npx tsc --noEmit
+
       - name: Lint
         run: pnpm lint
 
@@ -51,8 +54,11 @@ jobs:
       - name: Verify registry output
         run: |
           test -f apps/www/public/r/registry.json
-          test -f apps/www/public/r/spinner.json
+          test -f apps/www/public/r/conversation.json
           echo "Registry output verified"
 
       - name: Build docs site
         run: pnpm --filter @agentive-ui/www build
+
+      - name: Build mock playground
+        run: pnpm --filter @agentive-ui/mock-playground build

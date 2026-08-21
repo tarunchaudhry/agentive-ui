@@ -7,17 +7,17 @@ model (Tailwind CSS v4, CSS variables, Radix primitives, `cn` utility).
 
 ## What it is
 
-- **Registry-first.** Components are distributed through a self-hosted shadcn
-  registry. Consumers run `npx shadcn add @agentive-ui/<component>` and receive
-  source code copied into their project that they fully own and can modify.
-- **One small dependency.** A single headless, zero-UI package
-  `@agentive-ui/core` provides types, streaming/state hooks, message-part
-  parsers, and transport adapters. Registry components import from it.
-- **Transport-agnostic.** Every component renders from plain, well-typed props.
-  Adapters map external state (Vercel AI SDK, LangGraph, raw SSE/WebSocket) to
-  Agentive UI props.
-- **Fully themeable.** All visual decisions flow through an `--agentive-*`
-  CSS-variable layer layered on top of shadcn's tokens.
+- **Registry-first.** Distributed via a self-hosted shadcn registry. Run
+  `npx shadcn add @agentive-ui/<component>` to copy components directly into your
+  project. You own the code completely.
+- **One small npm package.** Backed by `@agentive-ui/core` — headless, zero-UI:
+  types, streaming hooks (`useAgentStream`, `useAutoScroll`), parsers (SSE/NDJSON),
+  and transport adapters.
+- **Transport-agnostic.** Components render from plain, well-typed props. Adapters
+  map external state (Vercel AI SDK, LangGraph, raw SSE/WebSocket) to Agentive UI props.
+- **Fully themeable.** Styled via an `--agentive-*` CSS variable layer on top of
+  shadcn's existing token system. Override colors, motion, and radii without editing
+  component internals.
 
 ## Repository layout
 
@@ -28,63 +28,169 @@ agentive-ui/
 │  ├─ agentive-ui/         # component .tsx files + demo files
 │  └─ registry.json        # shadcn registry manifest
 ├─ apps/www/               # Next.js docs site + hosts built registry at /r/{name}.json
-├─ examples/               # adapter + playground demos
+├─ examples/               # adapter + playground demos (e.g. mock-playground)
 └─ .github/workflows/      # CI
 ```
 
 ## Quickstart
 
+### 1. Initialize shadcn (if needed)
+
 ```bash
-# 1. Initialize shadcn in your project (if you haven't)
 npx shadcn@latest init
-
-# 2. Register the Agentive UI namespace
-npx shadcn@latest registry add @agentive-ui=https://agentive-ui.dev/r/{name}.json
-
-# 3. Add a component
-npx shadcn@latest add @agentive-ui/spinner
 ```
 
-## Components
+### 2. Register the Agentive UI namespace
 
-| Component | Description                                                                      |
-| --------- | -------------------------------------------------------------------------------- |
-| `spinner` | Token-driven loading spinner (ring color follows `--agentive-streaming-caret`).  |
-| `theme`   | The `--agentive-*` CSS variable layer (installed automatically as a dependency). |
+```bash
+npx shadcn@latest registry add @agentive-ui=https://agentive-ui.dev/r/{name}.json
+```
 
-> Full component inventory lands with each phase: chat primitives, agent
-> state/tool use, research agents, and browser/computer-use agents.
+_(For local development, use `http://localhost:3000/r/{name}.json`)_
 
-## Development
+### 3. Add components
+
+```bash
+npx shadcn@latest add @agentive-ui/conversation @agentive-ui/prompt-input
+```
+
+### 4. Use in your app
+
+```tsx
+"use client"
+
+import { useAgentStream } from "@agentive-ui/core"
+import { createChatMockStream } from "@agentive-ui/core/mock"
+import { Conversation } from "@/components/agentive/conversation"
+import { PromptInput } from "@/components/agentive/prompt-input"
+
+export function AgentChat() {
+  const { messages, isStreaming, start, append } = useAgentStream()
+
+  const handleSubmit = async (text: string) => {
+    append({
+      id: `user-${Date.now()}`,
+      role: "user",
+      parts: [{ type: "text", id: `part-${Date.now()}`, text }],
+      status: "complete",
+    })
+
+    await start(
+      createChatMockStream({
+        text: "Hello from **Agentive UI**!",
+        delayMs: 15,
+      })
+    )
+  }
+
+  return (
+    <div className="flex h-svh flex-col">
+      <Conversation
+        messages={messages}
+        isStreaming={isStreaming}
+        className="min-h-0 flex-1"
+      />
+      <div className="border-t p-3">
+        <PromptInput onSubmit={handleSubmit} isGenerating={isStreaming} />
+      </div>
+    </div>
+  )
+}
+```
+
+## Component Inventory
+
+### Phase 1 — Chat Primitives (Current)
+
+| Component          | Description                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `conversation`     | Chat transcript scroll container with stick-to-bottom streaming, prepended history preservation, and jump-to-latest pill.             |
+| `message`          | Compound message row (`Message.Avatar`, `Message.Content`, `Message.Actions`, `Message.Timestamp`) rendering typed `MessagePart`s.    |
+| `markdown-content` | Streaming-safe GFM markdown renderer with Shiki syntax-highlighted code blocks (JavaScript engine, no WASM), copy button, and tables. |
+| `streaming-text`   | Token-append plain text renderer with an animated blinking caret.                                                                     |
+| `prompt-input`     | Auto-growing composer with Enter/Shift+Enter handling, stop button state, and attachment chips.                                       |
+| `typing-dots`      | Animated 3-dot typing indicator driven by `--agentive-streaming-caret`.                                                               |
+| `shimmer`          | Skeleton placeholder with sweeping gradient driven by `--agentive-shimmer-*`.                                                         |
+| `spinner`          | Token-driven loading spinner with `prefers-reduced-motion` support.                                                                   |
+| `theme`            | Core `--agentive-*` CSS variables + keyframes layer.                                                                                  |
+
+### Roadmap
+
+- **Phase 2 — Agent State & Tool Use:** `Reasoning` collapsible accordion, `StepTimeline`, `ToolCall` cards, `ToolApproval` human-in-the-loop queue, `AgentStatus`, `UsageMeter`, `ErrorState`, Vercel AI SDK adapter.
+- **Phase 3 — Search & Research:** `SourceChip` / `InlineCitation`, `SourceCard` & `SourceList`, `SearchActivity`, `ResearchPlan`, `DeepResearchProgress` parallel fan-out, `ReportView`.
+- **Phase 4 — Browser / Computer Use & Workspace:** `BrowserView` action overlay viewport, `ActionLog`, `AgentWorkspace` resizable split-pane, `ThreadList`, `Suggestions`, LangGraph adapter.
+
+## Theming System
+
+Agentive UI layers dedicated variables on top of standard shadcn tokens. Overrides can be defined in your `globals.css`:
+
+```css
+:root {
+  /* Roles */
+  --agentive-user-bubble: var(--primary);
+  --agentive-user-bubble-fg: var(--primary-foreground);
+  --agentive-assistant-bubble: var(--muted);
+  --agentive-assistant-bubble-fg: var(--foreground);
+
+  /* Agent state */
+  --agentive-thinking: var(--muted-foreground);
+  --agentive-streaming-caret: var(--primary);
+  --agentive-shimmer-from: var(--muted);
+  --agentive-shimmer-to: var(--accent);
+
+  /* Tool lifecycle */
+  --agentive-tool-pending: var(--muted-foreground);
+  --agentive-tool-running: var(--primary);
+  --agentive-tool-success: oklch(0.596 0.145 163.225);
+  --agentive-tool-error: var(--destructive);
+  --agentive-approval-accent: oklch(0.769 0.188 70.08);
+
+  /* Research / Citations */
+  --agentive-citation: var(--primary);
+  --agentive-source-card-border: var(--border);
+
+  /* Browser Agent */
+  --agentive-action-highlight: var(--ring);
+  --agentive-viewport-border: var(--border);
+
+  /* Motion & Shape */
+  --agentive-motion-duration: 0.2s;
+  --agentive-bubble-radius: var(--radius);
+}
+```
+
+## Development & Testing
 
 ```bash
 pnpm install
-pnpm --filter @agentive-ui/core test      # run core tests
-pnpm --filter @agentive-ui/core build     # build core
-pnpm registry:build                       # build registry JSON into apps/www/public/r
-pnpm --filter @agentive-ui/www dev        # serve docs + registry at :3000
+pnpm build                             # build core package
+pnpm test                              # run all unit and integration tests
+pnpm typecheck                         # verify TypeScript across packages
+pnpm lint                              # run ESLint
+pnpm registry:build                    # compile registry into apps/www/public/r
+pnpm --filter @agentive-ui/www dev     # start documentation app at localhost:3000
 ```
 
-To test registry installs locally, start the bundled Verdaccio registry,
-publish `@agentive-ui/core` to it, and point a scratch app at it (see
-`CONTRIBUTING.md`).
+### Local Registry Testing
+
+Installs that reference unpublished packages use the local Verdaccio dev registry:
+
+```bash
+pnpm dev:registry                      # start local Verdaccio registry (:4873)
+pnpm publish:local                     # publish @agentive-ui/core locally
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for full details.
 
 ## Comparison
 
-|           | Agentive UI                                      | assistant-ui    | AI Elements   | CopilotKit         |
-| --------- | ------------------------------------------------ | --------------- | ------------- | ------------------ |
-| Model     | shadcn (registry + copy-into-project)            | npm packages    | npm packages  | npm packages       |
-| Coupling  | none (props + adapters)                          | some            | AI SDK        | CopilotKit runtime |
-| Ownership | full source, editable                            | library         | library       | library            |
-| Focus     | agent workflows (tools, research, browser, HITL) | chat primitives | AI primitives | agent runtime      |
-
-An honest take: if you need a chat widget quickly and don't mind a library
-dependency, assistant-ui is excellent. If you want shadcn-style source
-ownership and deep agent-workflow components (tool approval, research fan-out,
-browser sessions), Agentive UI is the fit. AI Elements and CopilotKit target
-different layers (primitive building blocks and a hosted agent runtime,
-respectively).
+|                  | Agentive UI                                           | assistant-ui           | AI Elements            | CopilotKit             |
+| ---------------- | ----------------------------------------------------- | ---------------------- | ---------------------- | ---------------------- |
+| **Distribution** | shadcn (registry + copy-into-project)                 | npm packages           | npm packages           | npm packages           |
+| **Coupling**     | None (pure props + adapters)                          | Some runtime coupling  | AI SDK                 | CopilotKit runtime     |
+| **Ownership**    | Full source ownership, zero black box                 | Library component tree | Library component tree | Managed framework      |
+| **Focus**        | Deep agent workflows (tools, HITL, research, browser) | Chat UI primitives     | AI UI primitives       | Agent runtime platform |
 
 ## License
 
-MIT
+[MIT](./LICENSE)
