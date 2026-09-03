@@ -13,12 +13,11 @@ const RESPONSES = [
   "Try **Stream 200 messages** above to see the perf behavior on a long thread.",
 ]
 
-let turn = 0
-
 export function PlaygroundChat() {
   const { messages, status, isStreaming, start, append, setMessages, clear } =
     useAgentStream()
   const [loading200, setLoading200] = React.useState(false)
+  const turnRef = React.useRef(0)
 
   const handleSubmit = async (text: string) => {
     append({
@@ -29,7 +28,7 @@ export function PlaygroundChat() {
     })
     await start(
       createChatMockStream({
-        text: RESPONSES[turn++ % RESPONSES.length] ?? "…",
+        text: RESPONSES[turnRef.current++ % RESPONSES.length] ?? "…",
         delayMs: 14,
       })
     )
