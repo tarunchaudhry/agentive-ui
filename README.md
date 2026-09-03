@@ -114,9 +114,22 @@ export function AgentChat() {
 | `spinner`          | Token-driven loading spinner with `prefers-reduced-motion` support.                                                                   |
 | `theme`            | Core `--agentive-*` CSS variables + keyframes layer.                                                                                  |
 
+### Phase 2 — Agent State & Tool Use (Current)
+
+| Component       | Description                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------- |
+| `reasoning`     | Collapsible thinking panel with duration metrics; auto-opens while streaming, auto-collapses on finish.       |
+| `task-timeline` | Ordered agent plan/step tracker with pending/active/done/error states and collapsible detail rows.            |
+| `tool-call`     | Tool execution card with lifecycle badge, formatted args, collapsible output, error display, and retry slot.  |
+| `tool-approval` | Human-in-the-loop approval card with Approve/Deny and editable JSON arguments; pairs with `useToolApprovals`. |
+| `agent-status`  | Compact live status line (“Searching the web…”) with spinner icon and elapsed timer.                          |
+| `usage-meter`   | Token/cost context-window meter with configurable warning and danger thresholds.                              |
+| `error-state`   | Inline recoverable error block with error code and retry action.                                              |
+
+Core additions: `useToolApprovals` queue hook and the `@agentive-ui/core/ai-sdk` adapter mapping Vercel AI SDK v4 (`content`/`toolInvocations`) and v5+ (`parts`) messages onto `AgentMessage[]`. See `examples/ai-sdk-chat` for a keyless end-to-end demo (mock model + real `useChat` transport + approval flow).
+
 ### Roadmap
 
-- **Phase 2 — Agent State & Tool Use:** `Reasoning` collapsible accordion, `StepTimeline`, `ToolCall` cards, `ToolApproval` human-in-the-loop queue, `AgentStatus`, `UsageMeter`, `ErrorState`, Vercel AI SDK adapter.
 - **Phase 3 — Search & Research:** `SourceChip` / `InlineCitation`, `SourceCard` & `SourceList`, `SearchActivity`, `ResearchPlan`, `DeepResearchProgress` parallel fan-out, `ReportView`.
 - **Phase 4 — Browser / Computer Use & Workspace:** `BrowserView` action overlay viewport, `ActionLog`, `AgentWorkspace` resizable split-pane, `ThreadList`, `Suggestions`, LangGraph adapter.
 

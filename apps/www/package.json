@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "prebuild": "pnpm registry:build",
     "registry:build": "cd ../.. && shadcn build ./registry/registry.json --output ./apps/www/public/r"
   },
   "dependencies": {
