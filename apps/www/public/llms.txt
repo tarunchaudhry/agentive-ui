@@ -1,0 +1,31 @@
+# Agentive UI
+
+A shadcn-based UI development kit for building AI agent interfaces.
+Registry-first: `npx shadcn add @agentive-ui/<component>`.
+Headless core: `@agentive-ui/core` (types, `useAgentStream`, `useToolApprovals`,
+SSE/NDJSON parsers, AI SDK adapter).
+
+Docs: https://agentive-ui.dev/docs
+Registry: https://agentive-ui.dev/r/registry.json
+
+## Components
+
+- conversation (/docs/conversation): chat transcript scroll container with stick-to-bottom streaming.
+- message (/docs/message): compound message row rendering typed MessageParts.
+- markdown-content (/docs/markdown-content): streaming-safe GFM markdown with Shiki code blocks.
+- streaming-text (/docs/streaming-text): plain-text token renderer with blinking caret.
+- prompt-input (/docs/prompt-input): auto-growing composer with stop button and attachments.
+- reasoning (/docs/reasoning): collapsible thinking panel with duration metrics.
+- task-timeline (/docs/task-timeline): ordered agent plan/step tracker.
+- tool-call (/docs/tool-call): tool execution card with lifecycle badge and retry.
+- tool-approval (/docs/tool-approval): human-in-the-loop approval card with editable args.
+- agent-status (/docs/agent-status): compact live status line with elapsed timer.
+- usage-meter (/docs/usage-meter): token/cost context-window meter with thresholds.
+- error-state (/docs/error-state): inline recoverable error block with retry.
+- typing-dots (/docs/typing-dots): animated typing indicator.
+- shimmer (/docs/shimmer): skeleton placeholder with sweeping gradient.
+- spinner (/docs/spinner): token-driven loading spinner.
+
+Theming: components reference only `--agentive-*` CSS variables layered on
+shadcn tokens (see the `theme` registry item); override variables in
+`globals.css` without editing component internals.

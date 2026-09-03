@@ -14,11 +14,8 @@ import {
   User,
 } from "lucide-react"
 
-import { MarkdownContent } from "./markdown-content"
 import { TypingDots } from "./typing-dots"
-import { Reasoning } from "./reasoning"
-import { ToolCall } from "./tool-call"
-import { ErrorState } from "./error-state"
+import { renderMessagePart } from "./message-part"
 
 /* ------------------------------------------------------------------ *
  * Context
@@ -199,57 +196,6 @@ function MessageTimestamp({
       {children}
     </time>
   )
-}
-
-/* ------------------------------------------------------------------ *
- * Part rendering
- * ------------------------------------------------------------------ */
-
-function renderMessagePart(part: MessagePart): React.ReactNode {
-  switch (part.type) {
-    case "text":
-      return <MarkdownContent key={part.id}>{part.text}</MarkdownContent>
-    case "reasoning":
-      return (
-        <Reasoning
-          key={part.id}
-          text={part.text}
-          status={part.status}
-          durationMs={part.durationMs}
-        />
-      )
-    case "tool-call":
-      return (
-        <ToolCall
-          key={part.id}
-          name={part.call.name}
-          args={part.call.args}
-          result={part.call.result}
-          status={part.call.status}
-        />
-      )
-    case "tool-result":
-      // Usually merged inside ToolCall; if stand-alone, render clean output
-      return null
-    case "error":
-      return (
-        <ErrorState
-          key={part.id}
-          message={part.message}
-          code={part.code}
-          recoverable={part.recoverable}
-        />
-      )
-    default:
-      return (
-        <div
-          key={part.id}
-          className="rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground"
-        >
-          {part.type}
-        </div>
-      )
-  }
 }
 
 /* ------------------------------------------------------------------ *

@@ -259,6 +259,11 @@
           "path": "registry/agentive-ui/message.tsx",
           "type": "registry:component",
           "target": "@components/agentive/message.tsx"
+        },
+        {
+          "path": "registry/agentive-ui/message-part.tsx",
+          "type": "registry:component",
+          "target": "@components/agentive/message-part.tsx"
         }
       ]
     },
