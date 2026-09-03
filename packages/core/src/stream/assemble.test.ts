@@ -24,6 +24,23 @@ describe("applyAgentEvent", () => {
       id: "m1:text:0",
       text: "Hello world",
     })
+    expect(state.status).toBe("complete")
+  })
+
+  it("folds stream status back to complete only when no message streams", () => {
+    const mid = fold([
+      { type: "message-start", messageId: "m1", role: "assistant" },
+      { type: "message-start", messageId: "m2", role: "assistant" },
+      { type: "message-end", messageId: "m1" },
+    ])
+    // m2 is still streaming, so the stream stays streaming.
+    expect(mid.status).toBe("streaming")
+
+    const done = fold([
+      { type: "message-start", messageId: "m1", role: "assistant" },
+      { type: "message-end", messageId: "m1" },
+    ])
+    expect(done.status).toBe("complete")
   })
 
   it("starts a message implicitly when the first event is a text delta", () => {

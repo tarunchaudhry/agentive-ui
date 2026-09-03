@@ -307,10 +307,17 @@ export function applyAgentEvent(
     }
 
     case "message-end": {
-      return updateMessage(state, event.messageId, "assistant", (m) => ({
+      const next = updateMessage(state, event.messageId, "assistant", (m) => ({
         ...m,
         status: "complete",
       }))
+      // Fold the stream-level status back to complete once no message is
+      // still streaming (unless an error was recorded).
+      const anyStreaming = next.messages.some((m) => m.status === "streaming")
+      if (!anyStreaming && next.status !== "error") {
+        return { ...next, status: "complete" }
+      }
+      return next
     }
 
     case "error": {

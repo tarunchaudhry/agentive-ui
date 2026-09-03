@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from "react"
+import { useCallback, useReducer, useRef } from "react"
 
 import type { ToolApprovalRequest } from "../types"
 
@@ -117,32 +117,30 @@ export function useToolApprovals(
   options: UseToolApprovalsOptions = {}
 ): UseToolApprovalsReturn {
   const [state, dispatch] = useReducer(reducer, { records: [], pending: [] })
+  const optionsRef = useRef(options)
+  optionsRef.current = options
+  const recordsRef = useRef(state.records)
+  recordsRef.current = state.records
 
   const enqueue = useCallback((request: ToolApprovalRequest) => {
     dispatch({ type: "enqueue", request })
   }, [])
 
-  const approve = useCallback(
-    (requestId: string, updatedArgs?: unknown) => {
-      const target = state.records.find((r) => r.request.id === requestId)
-      dispatch({ type: "approve", requestId, updatedArgs })
-      if (target) {
-        options.onApprove?.(target.request, updatedArgs)
-      }
-    },
-    [state.records, options]
-  )
+  const approve = useCallback((requestId: string, updatedArgs?: unknown) => {
+    const target = recordsRef.current.find((r) => r.request.id === requestId)
+    dispatch({ type: "approve", requestId, updatedArgs })
+    if (target) {
+      optionsRef.current.onApprove?.(target.request, updatedArgs)
+    }
+  }, [])
 
-  const deny = useCallback(
-    (requestId: string, reason?: string) => {
-      const target = state.records.find((r) => r.request.id === requestId)
-      dispatch({ type: "deny", requestId, reason })
-      if (target) {
-        options.onDeny?.(target.request, reason)
-      }
-    },
-    [state.records, options]
-  )
+  const deny = useCallback((requestId: string, reason?: string) => {
+    const target = recordsRef.current.find((r) => r.request.id === requestId)
+    dispatch({ type: "deny", requestId, reason })
+    if (target) {
+      optionsRef.current.onDeny?.(target.request, reason)
+    }
+  }, [])
 
   const clear = useCallback(() => {
     dispatch({ type: "clear" })
