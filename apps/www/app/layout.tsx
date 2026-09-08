@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
 
+import { Providers } from "@/components/providers"
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -14,7 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-svh bg-background font-sans text-foreground antialiased">
-        {children}
+        <Providers>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+        </Providers>
       </body>
     </html>
   )

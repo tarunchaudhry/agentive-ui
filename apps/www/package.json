@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "@agentive-ui/core": "workspace:*",
+    "gsap": "^3.15.0",
     "lucide-react": "^0.487.0",
+    "motion": "^13.2.0",
     "next": "15.5.9",
+    "next-themes": "^0.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",

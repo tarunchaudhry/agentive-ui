@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -95,6 +97,19 @@
   --animate-agentive-caret: agentive-caret-blink 1s steps(2, start) infinite;
   --animate-agentive-shimmer: agentive-shimmer 2s linear infinite;
   --animate-agentive-typing: agentive-typing 1.2s ease-in-out infinite;
+  --animate-agentive-message-in: agentive-message-in
+    var(--agentive-motion-duration) ease-out both;
+}
+
+@keyframes agentive-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes agentive-caret-blink {
@@ -135,5 +150,21 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: var(--agentive-streaming-caret);
+    color: var(--agentive-user-bubble-fg);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }

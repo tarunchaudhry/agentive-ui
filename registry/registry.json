@@ -12,7 +12,8 @@
         "theme": {
           "animate-agentive-caret": "agentive-caret-blink 1s steps(2, start) infinite",
           "animate-agentive-shimmer": "agentive-shimmer 2s linear infinite",
-          "animate-agentive-typing": "agentive-typing 1.2s ease-in-out infinite"
+          "animate-agentive-typing": "agentive-typing 1.2s ease-in-out infinite",
+          "animate-agentive-message-in": "agentive-message-in var(--agentive-motion-duration) ease-out both"
         },
         "light": {
           "agentive-user-bubble": "var(--primary)",
@@ -52,6 +53,10 @@
         "@keyframes agentive-typing": {
           "0%, 60%, 100%": { "transform": "translateY(0)", "opacity": "0.4" },
           "30%": { "transform": "translateY(-2px)", "opacity": "1" }
+        },
+        "@keyframes agentive-message-in": {
+          "from": { "opacity": "0", "transform": "translateY(6px)" },
+          "to": { "opacity": "1", "transform": "translateY(0)" }
         }
       }
     },

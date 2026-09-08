@@ -38,14 +38,21 @@ const MessageRow = React.memo(function MessageRow({
   renderMessage,
   renderPart,
 }: MessageRowProps) {
-  if (renderMessage) return <>{renderMessage(message)}</>
+  if (renderMessage)
+    return (
+      <div className="animate-agentive-message-in motion-reduce:animate-none">
+        {renderMessage(message)}
+      </div>
+    )
   return (
-    <Message
-      role={message.role}
-      status={message.status}
-      parts={message.parts}
-      renderPart={renderPart}
-    />
+    <div className="animate-agentive-message-in motion-reduce:animate-none">
+      <Message
+        role={message.role}
+        status={message.status}
+        parts={message.parts}
+        renderPart={renderPart}
+      />
+    </div>
   )
 })
 

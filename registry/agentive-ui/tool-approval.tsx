@@ -57,7 +57,7 @@ export function ToolApproval({
     <div
       role="alert"
       className={cn(
-        "my-3 overflow-hidden rounded-xl border border-(--agentive-approval-accent)/40 bg-card p-4 shadow-sm",
+        "my-3 overflow-hidden rounded-xl border border-(--agentive-approval-accent)/40 bg-card p-4 shadow-sm animate-agentive-message-in motion-reduce:animate-none",
         className
       )}
       {...props}
